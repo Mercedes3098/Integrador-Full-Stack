@@ -1,0 +1,14 @@
+{
+    "name": "trabajo-final",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+      "dev": "concurrently \"npm start --prefix server\" \"npm run dev --prefix client/vite-project\"",
+      "dev:client": "npm run dev --prefix client/vite-project",
+      "dev:server": "npm start --prefix server"
+    },
+    "dependencies": {
+      "concurrently": "^5.3.0"
+    }
+  }
+  

@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS odontology_api;
 CREATE DATABASE odontology_api;
 USE odontology_api;
 
@@ -11,13 +12,13 @@ CREATE TABLE users (
 
 CREATE TABLE patients (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,  -- Agrega 'INT' aquí
+    user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE dentists (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL, -- Agrega 'INT' aquí
+    user_id INT NOT NULL,
     specialty VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
