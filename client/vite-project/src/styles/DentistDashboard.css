@@ -1,0 +1,244 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body > header,
+body > nav,
+#root > header,
+#root > nav,
+.navbar,
+nav.navbar,
+header.navbar,
+[class*="navbar"],
+[class*="nav-bar"],
+[class*="navigation"],
+header[role="banner"],
+nav[aria-label*="principal"],
+nav[aria-label*="main"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Asegura que el dashboard ocupe toda la pantalla */
+html, body, #root {
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* El dashboard debe empezar desde arriba */
+.dashboard-container {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f5f7fa;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: linear-gradient(180deg, #2c5282 0%, #2a4365 100%);
+  color: white;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+  padding: 30px 20px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.nav-item {
+  display: block;
+  padding: 15px 25px;
+  color: #e2e8f0;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-left-color: #63b3ed;
+}
+
+.nav-item.active {
+  background-color: #3182ce;
+  color: white;
+  border-left-color: #63b3ed;
+  font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  background-color: #f5f7fa;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.main-header {
+  margin-bottom: 40px;
+}
+
+.main-header h1 {
+  font-size: 36px;
+  color: #2d3748;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Schedule Section */
+.schedule-section {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.schedule-title {
+  font-size: 24px;
+  color: #2d3748;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.appointments-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.appointment-item {
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+  border-left: 4px solid #3182ce;
+  padding-left: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.appointment-time {
+  font-size: 16px;
+  font-weight: 600;
+  color: #4a5568;
+  min-width: 90px;
+  margin-right: 30px;
+}
+
+.appointment-details {
+  flex: 1;
+}
+
+.patient-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 4px 0;
+}
+
+.appointment-type {
+  font-size: 14px;
+  color: #718096;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  
+  .sidebar-header {
+    padding: 20px;
+    min-width: 200px;
+  }
+  
+  .sidebar-nav {
+    display: flex;
+    padding: 0;
+    min-width: 500px;
+  }
+  
+  .nav-item {
+    white-space: nowrap;
+    border-left: none;
+    border-bottom: 4px solid transparent;
+  }
+  
+  .nav-item.active {
+    border-left: none;
+    border-bottom-color: #63b3ed;
+  }
+  
+  .main-content {
+    padding: 20px;
+  }
+  
+  .main-header h1 {
+    font-size: 28px;
+  }
+  
+  .schedule-title {
+    font-size: 20px;
+  }
+  
+  .appointment-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .appointment-time {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}

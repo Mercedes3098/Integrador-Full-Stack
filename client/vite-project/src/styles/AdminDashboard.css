@@ -1,0 +1,40 @@
+@import "./DentistDashboard.css";
+
+.admin-section {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  font-size: 24px;
+  color: #2d3748;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.overview-card {
+  background: #edf2f7;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.overview-card h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #2d3748;
+}
+
+.overview-card p {
+  font-size: 24px;
+  font-weight: bold;
+  color: #3182ce;
+}
