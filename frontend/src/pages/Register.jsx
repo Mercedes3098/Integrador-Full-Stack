@@ -1,24 +1,25 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/Auth';
 import '../styles/Auth.css';
 
 function Register() {
-  const [username, setUsername] = useState('');
+  const navigate = useNavigate();
+  const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { register } = useAuth();
+  const { register, loading } = useAuth();
 
   const validateForm = () => {
     const newErrors = {};
     
-    if (!username) {
-      newErrors.username = 'El nombre de usuario es requerido';
-    } else if (username.length < 3) {
-      newErrors.username = 'Mínimo 3 caracteres';
+    if (!nombre) {
+      newErrors.nombre = 'El nombre es requerido';
+    } else if (nombre.length < 3) {
+      newErrors.nombre = 'Mínimo 3 caracteres';
     }
     
     if (!email) {
@@ -65,15 +66,15 @@ function Register() {
     
     if (!validateForm()) return;
     
-    setIsLoading(true);
     try {
-      await register({ username, email, password });
-      console.log('Registro exitoso:', { username, email });
+      await register({ nombre, email, password });
+      console.log('Registro exitoso, redirigiendo...');
+      
+      // Redirigir al login
+      navigate('/login');
     } catch (error) {
-      setErrors({ submit: 'Error al crear la cuenta. Intenta nuevamente.' });
+      setErrors({ submit: error.message || 'Error al crear la cuenta' });
       console.error('Error de registro:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -87,17 +88,17 @@ function Register() {
           <div className="input-group">
             <input 
               type="text" 
-              placeholder="Nombre de usuario" 
-              value={username} 
+              placeholder="Nombre completo" 
+              value={nombre} 
               onChange={(e) => {
-                setUsername(e.target.value);
-                setErrors(prev => ({ ...prev, username: '', submit: '' }));
+                setNombre(e.target.value);
+                setErrors(prev => ({ ...prev, nombre: '', submit: '' }));
               }}
-              className={errors.username ? 'input-error' : ''}
-              disabled={isLoading}
+              className={errors.nombre ? 'input-error' : ''}
+              disabled={loading}
             />
-            {errors.username && (
-              <span className="error-message">{errors.username}</span>
+            {errors.nombre && (
+              <span className="error-message">{errors.nombre}</span>
             )}
           </div>
 
@@ -111,7 +112,7 @@ function Register() {
                 setErrors(prev => ({ ...prev, email: '', submit: '' }));
               }}
               className={errors.email ? 'input-error' : ''}
-              disabled={isLoading}
+              disabled={loading}
             />
             {errors.email && (
               <span className="error-message">{errors.email}</span>
@@ -129,13 +130,13 @@ function Register() {
                   setErrors(prev => ({ ...prev, password: '', submit: '' }));
                 }}
                 className={errors.password ? 'input-error' : ''}
-                disabled={isLoading}
+                disabled={loading}
               />
               <button
                 type="button"
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
+                disabled={loading}
                 aria-label="Mostrar contraseña"
               >
                 {showPassword ? '👁️' : '👁️‍🗨️'}
@@ -162,7 +163,7 @@ function Register() {
                   setErrors(prev => ({ ...prev, confirmPassword: '', submit: '' }));
                 }}
                 className={errors.confirmPassword ? 'input-error' : ''}
-                disabled={isLoading}
+                disabled={loading}
               />
             </div>
             {errors.confirmPassword && (
@@ -178,9 +179,9 @@ function Register() {
 
           <button 
             type="submit" 
-            disabled={isLoading}
+            disabled={loading}
           >
-            {isLoading ? (
+            {loading ? (
               <>
                 <span className="spinner"></span>
                 Creando cuenta...

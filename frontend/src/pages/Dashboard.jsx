@@ -2,22 +2,36 @@ import { useEffect, useState } from "react";
 import NotaCard from "../components/NotaCard";
 import NotaForm from "../components/NotaForm";
 import Sidebar from "../components/Sidebar";
+import axios from "axios";
 import "../styles/Dashboard.css";
 
 function Dashboard() {
-  const [notas, setNotas] = useState([]); // listado de notas
+  const [notas, setNotas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedNota, setSelectedNota] = useState(null); // para editar
+  const [selectedNota, setSelectedNota] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  // 🔹 Simulamos fetch inicial (luego lo reemplazamos con notasService)
+  // Obtener el id del usuario del localStorage
+  const getUserId = () => {
+    // Por ahora usamos un ID fijo, luego lo obtendremos del token
+    return 1;
+  };
+
+  // Fetch de notas desde el backend
   useEffect(() => {
-    setLoading(true);
-    // Aquí luego irá el fetch real con Axios
-    setTimeout(() => {
-      setNotas([]); // vacío por ahora
-      setLoading(false);
-    }, 500);
+    const fetchNotas = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('http://localhost:5000/api/notas');
+        setNotas(response.data);
+      } catch (error) {
+        console.error('Error al cargar notas:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotas();
   }, []);
 
   const handleCreate = () => {
@@ -30,22 +44,58 @@ function Dashboard() {
     setShowForm(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm("¿Eliminar esta nota?")) {
-      setNotas(notas.filter((n) => n.id !== id));
-      // Luego reemplazamos con notasService.deleteNota(id)
+      try {
+        await axios.delete(`http://localhost:5000/api/notas/${id}`);
+        setNotas(notas.filter((n) => n.id_nota !== id));
+        console.log('Nota eliminada exitosamente');
+      } catch (error) {
+        console.error('Error al eliminar nota:', error);
+        alert('Error al eliminar la nota');
+      }
     }
   };
 
-  const handleSave = (nuevaNota) => {
-    if (selectedNota) {
-      // editar
-      setNotas(notas.map((n) => (n.id === nuevaNota.id ? nuevaNota : n)));
-    } else {
-      // crear
-      setNotas([...notas, { ...nuevaNota, id: Date.now() }]);
+  const handleSubmit = async (notaData) => {
+    try {
+      if (selectedNota) {
+        // Editar nota existente
+        const response = await axios.put(
+          `http://localhost:5000/api/notas/${selectedNota.id_nota}`,
+          {
+            titulo: notaData.titulo,
+            contenido: notaData.contenido
+          }
+        );
+        
+        // Actualizar en el estado local
+        setNotas(notas.map((n) => 
+          n.id_nota === selectedNota.id_nota 
+            ? { ...n, ...notaData } 
+            : n
+        ));
+        
+        console.log('Nota actualizada:', response.data);
+      } else {
+        // Crear nueva nota
+        const response = await axios.post('http://localhost:5000/api/notas', {
+          titulo: notaData.titulo,
+          contenido: notaData.contenido,
+          id_usuario: getUserId()
+        });
+        
+        // Agregar al estado local
+        setNotas([...notas, response.data]);
+        
+        console.log('Nota creada:', response.data);
+      }
+      
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error al guardar nota:', error);
+      alert('Error al guardar la nota: ' + (error.response?.data?.message || error.message));
     }
-    setShowForm(false);
   };
 
   if (loading) return <p className="dashboard-loading">Cargando notas...</p>;
@@ -68,10 +118,10 @@ function Dashboard() {
           <div className="notas-grid">
             {notas.map((nota) => (
               <NotaCard
-                key={nota.id}
+                key={nota.id_nota}
                 nota={nota}
                 onEdit={() => handleEdit(nota)}
-                onDelete={() => handleDelete(nota.id)}
+                onDelete={() => handleDelete(nota.id_nota)}
               />
             ))}
           </div>
@@ -80,8 +130,8 @@ function Dashboard() {
 
       {showForm && (
         <NotaForm
-          nota={selectedNota}
-          onSave={handleSave}
+          initialData={selectedNota}
+          onSubmit={handleSubmit}
           onCancel={() => setShowForm(false)}
         />
       )}

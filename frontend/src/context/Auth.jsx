@@ -1,35 +1,66 @@
 import { createContext, useContext, useState } from 'react';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); // null si no está logueado
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // Función para loguear usuario
-  const login = (userData) => {
-    setUser(userData); 
-    // Aquí luego agregarías localStorage/sessionStorage o token
+  const login = async (credentials) => {
+    setLoading(true);
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/login', credentials);
+      
+      const { token, usuario } = response.data;
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('usuario', usuario);
+      
+      setUser({ usuario, token });
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error en login:', error);
+      throw new Error(error.response?.data?.message || 'Error al iniciar sesión');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Función para registrar usuario
-  const register = (userData) => {
-    setUser(userData);
-    // Igual, guardar token si viene del backend
+  const register = async (userData) => {
+    setLoading(true);
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/register', userData);
+      
+      console.log('Registro exitoso:', response.data);
+      
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error('Error en registro:', error);
+      throw new Error(error.response?.data?.message || 'Error al registrar');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Función para cerrar sesión
   const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-// Hook para usar Auth fácilmente
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe usarse dentro de AuthProvider');
+  }
+  return context;
 }

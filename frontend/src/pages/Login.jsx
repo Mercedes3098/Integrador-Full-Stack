@@ -1,14 +1,15 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/Auth';
 import '../styles/Auth.css';
 
 function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
 
   const validateForm = () => {
     const newErrors = {};
@@ -34,15 +35,15 @@ function Login() {
     
     if (!validateForm()) return;
     
-    setIsLoading(true);
     try {
       await login({ email, password });
-      console.log('Login exitoso:', { email });
+      console.log('Login exitoso, redirigiendo...');
+      
+      // Redirigir al dashboard
+      navigate('/dashboard');
     } catch (error) {
-      setErrors({ submit: 'Error al iniciar sesión. Verifica tus credenciales.' });
+      setErrors({ submit: error.message || 'Error al iniciar sesión' });
       console.error('Error de login:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -61,7 +62,7 @@ function Login() {
                 setErrors(prev => ({ ...prev, email: '' }));
               }}
               className={errors.email ? 'input-error' : ''}
-              disabled={isLoading}
+              disabled={loading}
               required
             />
             {errors.email && (
@@ -80,14 +81,14 @@ function Login() {
                   setErrors(prev => ({ ...prev, password: '' }));
                 }}
                 className={errors.password ? 'input-error' : ''}
-                disabled={isLoading}
+                disabled={loading}
                 required
               />
               <button
                 type="button"
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
+                disabled={loading}
               >
                 {showPassword ? '👁️' : '👁️‍🗨️'}
               </button>
@@ -105,10 +106,10 @@ function Login() {
 
           <button 
             type="submit" 
-            disabled={isLoading}
-            className={isLoading ? 'loading' : ''}
+            disabled={loading}
+            className={loading ? 'loading' : ''}
           >
-            {isLoading ? (
+            {loading ? (
               <>
                 <span className="spinner"></span>
                 Ingresando...
