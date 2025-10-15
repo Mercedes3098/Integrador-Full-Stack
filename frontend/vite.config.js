@@ -4,12 +4,12 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,       // Puedes cambiar el puerto si quieres
-    open: true,       // Abre el navegador automáticamente
+    port: 3000,       
+    open: true,       
   },
   resolve: {
     alias: {
-      '@': '/src',    // Alias para importar más fácil
+      '@': '/src',    
     },
   },
 });

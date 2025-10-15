@@ -85,7 +85,6 @@
   font-weight: 600;
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -132,7 +131,6 @@
   }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .dashboard-container {
     flex-direction: column;

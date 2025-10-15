@@ -1,9 +1,34 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/Auth';
+import '../styles/Navbar.css';
 
 function Navbar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    if (window.confirm('¿Seguro que quieres cerrar sesión?')) {
+      logout();
+      navigate('/');
+    }
+  };
+
   return (
-    <nav style={{ background: '#4a90e2', padding: '10px', color: 'white' }}>
-      <Link to="/">Inicio</Link>
+    <nav className="navbar">
+      <div className="navbar-content">
+        <Link to="/dashboard" className="navbar-brand">
+          📝 App de Notas
+        </Link>
+        
+        {user && (
+          <div className="navbar-user">
+            <span className="user-name">👤 {user.usuario}</span>
+            <button onClick={handleLogout} className="btn-logout">
+              Cerrar sesión
+            </button>
+          </div>
+        )}
+      </div>
     </nav>
   );
 }

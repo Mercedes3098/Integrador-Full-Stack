@@ -1,11 +1,9 @@
-/* Reset básico */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
   
-  /* Contenedor centralizado */
   .auth-container {
     display: flex;
     flex-direction: column;
@@ -17,7 +15,6 @@
     padding: 20px;
   }
   
-  /* Caja blanca del formulario */
   .auth-box {
     background-color: #ffffff;
     padding: 50px 40px;
@@ -38,8 +35,7 @@
       transform: translateY(0);
     }
   }
-  
-  /* Título */
+
   .auth-box h2 {
     margin-bottom: 30px;
     color: #2c3e50;
@@ -48,21 +44,18 @@
     text-align: center;
   }
   
-  /* Formulario */
   .auth-box form {
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
   
-  /* Grupo de input */
   .input-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
   
-  /* Inputs base */
   .auth-box input[type="text"],
   .auth-box input[type="email"],
   .auth-box input[type="password"] {
@@ -93,7 +86,6 @@
     opacity: 0.7;
   }
   
-  /* Input con error */
   .auth-box input.input-error {
     border-color: #e74c3c;
     background-color: #fff5f5;
@@ -104,7 +96,6 @@
     box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1);
   }
   
-  /* Wrapper para contraseña */
   .password-wrapper {
     position: relative;
     width: 100%;
@@ -140,7 +131,6 @@
     opacity: 0.4;
   }
   
-  /* Mensajes de error */
   .error-message {
     color: #e74c3c;
     font-size: 0.875rem;
@@ -148,7 +138,6 @@
     padding-left: 4px;
   }
   
-  /* Caja de error general */
   .error-box {
     background-color: #fee;
     color: #c0392b;
@@ -165,7 +154,6 @@
     75% { transform: translateX(10px); }
   }
   
-  /* Indicador de fortaleza de contraseña */
   .password-strength {
     font-size: 0.875rem;
     font-weight: 600;
@@ -188,7 +176,6 @@
     color: #16a085;
   }
   
-  /* Botón principal */
   .auth-box button[type="submit"] {
     padding: 16px 24px;
     font-size: 1.05rem;
@@ -222,7 +209,6 @@
     transform: none;
   }
   
-  /* Spinner de carga */
   .spinner {
     width: 18px;
     height: 18px;
@@ -238,7 +224,6 @@
     }
   }
   
-  /* Footer con links */
   .auth-footer {
     margin-top: 24px;
     text-align: center;
@@ -261,7 +246,6 @@
     text-decoration: underline;
   }
   
-  /* Responsive */
   @media (max-width: 480px) {
     .auth-box {
       padding: 40px 30px;
@@ -272,6 +256,6 @@
     }
   
     .auth-box input {
-      font-size: 16px; /* Evita zoom en iOS */
+      font-size: 16px; 
     }
   }

@@ -11,10 +11,6 @@ function Dashboard() {
   const [selectedNota, setSelectedNota] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  const getUserId = () => {
-    return 1;
-  };
-
   useEffect(() => {
     fetchNotas();
   }, []);
@@ -27,6 +23,10 @@ function Dashboard() {
       setNotas(response.data);
     } catch (error) {
       console.error('❌ Error al cargar notas:', error);
+      if (error.response?.status === 403) {
+        alert('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        window.location.href = '/login';
+      }
     } finally {
       setLoading(false);
     }
@@ -67,29 +67,30 @@ function Dashboard() {
     
     try {
       if (selectedNota) {
-        // ACTUALIZAR
         await api.put(`/notas/${selectedNota.id_nota}`, {
           titulo: notaData.titulo,
           contenido: notaData.contenido
         });
 
-        setNotas(notas.map((n) => 
-          n.id_nota === selectedNota.id_nota 
-            ? { ...n, titulo: notaData.titulo, contenido: notaData.contenido } 
-            : n
-        ));
+        await actualizarEtiquetasNota(selectedNota.id_nota, notaData.etiquetas);
 
+        await fetchNotas();
+        
         console.log('✅ Nota actualizada');
         alert('Nota actualizada');
       } else {
         // CREAR
         const response = await api.post('/notas', {
           titulo: notaData.titulo,
-          contenido: notaData.contenido,
-          id_usuario: getUserId()
+          contenido: notaData.contenido
         });
 
-        setNotas([...notas, response.data]);
+        if (notaData.etiquetas && notaData.etiquetas.length > 0) {
+          await asignarEtiquetasNota(response.data.id_nota, notaData.etiquetas);
+        }
+
+        await fetchNotas();
+        
         console.log('✅ Nota creada:', response.data);
         alert('Nota creada');
       }
@@ -99,6 +100,46 @@ function Dashboard() {
     } catch (error) {
       console.error('❌ Error al guardar:', error);
       alert('Error: ' + (error.response?.data?.message || error.message));
+    }
+  };
+
+  const actualizarEtiquetasNota = async (id_nota, nuevasEtiquetas) => {
+    try {
+      const notaActual = notas.find(n => n.id_nota === id_nota);
+      const etiquetasActuales = notaActual?.etiquetas || [];
+
+      for (const etiqueta of etiquetasActuales) {
+        if (!nuevasEtiquetas.find(e => e.id_etiqueta === etiqueta.id_etiqueta)) {
+          await api.post('/etiquetas/remover', {
+            id_nota,
+            id_etiqueta: etiqueta.id_etiqueta
+          });
+        }
+      }
+
+      for (const etiqueta of nuevasEtiquetas) {
+        if (!etiquetasActuales.find(e => e.id_etiqueta === etiqueta.id_etiqueta)) {
+          await api.post('/etiquetas/asignar', {
+            id_nota,
+            id_etiqueta: etiqueta.id_etiqueta
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error al actualizar etiquetas:', error);
+    }
+  };
+
+  const asignarEtiquetasNota = async (id_nota, etiquetas) => {
+    try {
+      for (const etiqueta of etiquetas) {
+        await api.post('/etiquetas/asignar', {
+          id_nota,
+          id_etiqueta: etiqueta.id_etiqueta
+        });
+      }
+    } catch (error) {
+      console.error('Error al asignar etiquetas:', error);
     }
   };
 
@@ -121,7 +162,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <Sidebar />
+      <Sidebar notas={notas} onRefresh={fetchNotas} />
 
       <div className="dashboard-content">
         <div className="dashboard-header">

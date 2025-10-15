@@ -1,6 +1,5 @@
 import api from './api';
 
-// --- CRUD de Etiquetas ---
 export const getEtiquetas = async () => {
   const res = await api.get('/etiquetas');
   return res.data;

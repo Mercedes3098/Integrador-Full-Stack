@@ -1,10 +1,9 @@
-// backend/routes/etiquetas.routes.js
 import express from "express";
 const router = express.Router();
 
 import {
   createEtiqueta,
-  getEtiquetas,        // ✅ nombre correcto
+  getEtiquetas,
   getEtiquetaById,
   updateEtiquetaById,
   deleteEtiqueta,
@@ -16,17 +15,17 @@ import {
   valCreateEtiqueta,
   valEtiquetaId,
   valNotaEtiqueta
-} from "../middleware/etiquetas.validator.js"; // ✅ nombre correcto del archivo
+} from "../middleware/etiquetas.validator.js";
 
-// Rutas principales de etiquetas
-router.get("/", getEtiquetas);
-router.get("/:id", valEtiquetaId, getEtiquetaById);
-router.post("/", valCreateEtiqueta, createEtiqueta);
-router.put("/:id", valEtiquetaId, updateEtiquetaById);
-router.delete("/:id", valEtiquetaId, deleteEtiqueta);
+import { isAuthenticated } from "../middleware/auth.middleware.js";
 
-// Rutas para asignar y remover etiquetas de notas
-router.post("/asignar", valNotaEtiqueta, addEtiquetaToNota);
-router.post("/remover", valNotaEtiqueta, removeEtiquetaFromNota);
+router.get("/", isAuthenticated, getEtiquetas);
+router.get("/:id", isAuthenticated, valEtiquetaId, getEtiquetaById);
+router.post("/", isAuthenticated, valCreateEtiqueta, createEtiqueta);
+router.put("/:id", isAuthenticated, valEtiquetaId, updateEtiquetaById);
+router.delete("/:id", isAuthenticated, valEtiquetaId, deleteEtiqueta);
+
+router.post("/asignar", isAuthenticated, valNotaEtiqueta, addEtiquetaToNota);
+router.post("/remover", isAuthenticated, valNotaEtiqueta, removeEtiquetaFromNota);
 
 export default router;

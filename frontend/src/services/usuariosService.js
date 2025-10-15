@@ -1,6 +1,5 @@
 import api from './api';
 
-// --- Autenticación y gestión de usuario ---
 export const login = async (data) => {
   const res = await api.post('/usuarios/login', data);
   return res.data;

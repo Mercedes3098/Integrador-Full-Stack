@@ -1,6 +1,5 @@
 import api from './api';
 
-// --- CRUD de Notas ---
 export const getNotas = async () => {
   const res = await api.get('/notas');
   return res.data;

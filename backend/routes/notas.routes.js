@@ -1,4 +1,3 @@
-// backend/routes/notas.routes.js
 import express from "express";
 const router = express.Router();
 
@@ -11,20 +10,12 @@ import {
 } from "../controllers/notas.controller.js";
 
 import { valCreateNota, valUpdateNota, valNotaId } from "../middleware/notas.validator.js";
+import { isAuthenticated } from "../middleware/auth.middleware.js";
 
-// Crear nota
-router.post("/", valCreateNota, createNota);
-
-// Obtener todas las notas
-router.get("/", getAllNotas);
-
-// Obtener nota por ID
-router.get("/:id", valNotaId, getNotaById);
-
-// Actualizar nota
-router.put("/:id", valNotaId, valUpdateNota, updateNotaById);
-
-// Eliminar nota
-router.delete("/:id", valNotaId, deleteNotaById);
+router.post("/", isAuthenticated, valCreateNota, createNota);
+router.get("/", isAuthenticated, getAllNotas);
+router.get("/:id", isAuthenticated, valNotaId, getNotaById);
+router.put("/:id", isAuthenticated, valNotaId, valUpdateNota, updateNotaById);
+router.delete("/:id", isAuthenticated, valNotaId, deleteNotaById);
 
 export default router;

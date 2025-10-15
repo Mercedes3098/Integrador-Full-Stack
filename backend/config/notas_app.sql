@@ -22,8 +22,11 @@ CREATE TABLE notas (
 
 CREATE TABLE etiquetas (
     id_etiqueta INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL UNIQUE,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id_usuario INT NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_etiqueta_usuario (nombre, id_usuario),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 );
 
 CREATE TABLE nota_etiqueta (
