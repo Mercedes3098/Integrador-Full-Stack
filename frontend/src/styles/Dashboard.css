@@ -1,0 +1,56 @@
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background: #f7f9fb;
+  }
+  
+  .dashboard-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+  }
+  
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .dashboard-header h2 {
+    color: #2c3e50;
+    margin: 0;
+  }
+  
+  .btn-add {
+    background-color: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn-add:hover {
+    background-color: #1565c0;
+  }
+  
+  .notas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  
+  .no-notas {
+    color: #555;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .dashboard-loading {
+    text-align: center;
+    margin-top: 50px;
+    color: #555;
+    font-size: 1.2rem;
+  }
+  

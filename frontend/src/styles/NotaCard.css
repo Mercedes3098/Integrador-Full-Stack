@@ -1,0 +1,44 @@
+.nota-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 16px;
+    width: 280px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
+  }
+  
+  .nota-card:hover {
+    transform: scale(1.02);
+  }
+  
+  .nota-etiquetas {
+    margin-top: 10px;
+  }
+  
+  .etiqueta {
+    display: inline-block;
+    background-color: #dfe4ff;
+    color: #333;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    margin-right: 5px;
+  }
+  
+  .nota-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  .nota-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
