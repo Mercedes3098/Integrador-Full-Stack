@@ -1,11 +1,12 @@
-CREATE DATABASE IF NOT EXISTS notas_app;
+DROP DATABASE IF EXISTS notas_app;
+CREATE DATABASE notas_app;
 USE notas_app;
 
 CREATE TABLE usuarios (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,  -- Se recomienda almacenar hashes de contraseña
+    password VARCHAR(255) NOT NULL,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -21,7 +22,8 @@ CREATE TABLE notas (
 
 CREATE TABLE etiquetas (
     id_etiqueta INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL UNIQUE
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE nota_etiqueta (

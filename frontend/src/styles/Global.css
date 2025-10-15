@@ -1,0 +1,73 @@
+/* --- Reset básico --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* --- Body y html --- */
+  html, body {
+    height: 100%;
+    width: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f5f6fa;
+    color: #333;
+    overflow-x: hidden; /* Evita scroll horizontal */
+    overflow-y: auto;   /* Permite scroll vertical */
+  }
+  
+  /* --- Scrollbar opcional estilizada --- */
+  body::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  body::-webkit-scrollbar-track {
+    background: #f0f0f0;
+  }
+  
+  body::-webkit-scrollbar-thumb {
+    background-color: #4a90e2;
+    border-radius: 4px;
+  }
+  
+  /* --- Contenedor principal --- */
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* --- Enlaces --- */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  /* --- Botones básicos --- */
+  button {
+    cursor: pointer;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    background-color: #4a90e2;
+    color: white;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+  }
+  
+  button:hover {
+    background-color: #357abd;
+  }
+  
+  /* --- Títulos --- */
+  h1, h2, h3, h4 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* --- Párrafos --- */
+  p {
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+  
