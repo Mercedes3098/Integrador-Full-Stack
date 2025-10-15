@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import NotaCard from "../components/NotaCard";
 import NotaForm from "../components/NotaForm";
 import Sidebar from "../components/Sidebar";
-import axios from "axios";
+import api from "../services/api";
 import "../styles/Dashboard.css";
 
 function Dashboard() {
@@ -11,18 +11,15 @@ function Dashboard() {
   const [selectedNota, setSelectedNota] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  // Obtener el id del usuario del localStorage
   const getUserId = () => {
-    // Por ahora usamos un ID fijo, luego lo obtendremos del token
     return 1;
   };
 
-  // Fetch de notas desde el backend
   useEffect(() => {
     const fetchNotas = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5000/api/notas');
+        const response = await api.get('/notas'); 
         setNotas(response.data);
       } catch (error) {
         console.error('Error al cargar notas:', error);
@@ -47,7 +44,8 @@ function Dashboard() {
   const handleDelete = async (id) => {
     if (confirm("¿Eliminar esta nota?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/notas/${id}`);
+        await api.delete(`/notas/${id}`);
+
         setNotas(notas.filter((n) => n.id_nota !== id));
         console.log('Nota eliminada exitosamente');
       } catch (error) {
@@ -60,37 +58,30 @@ function Dashboard() {
   const handleSubmit = async (notaData) => {
     try {
       if (selectedNota) {
-        // Editar nota existente
-        const response = await axios.put(
-          `http://localhost:5000/api/notas/${selectedNota.id_nota}`,
-          {
-            titulo: notaData.titulo,
-            contenido: notaData.contenido
-          }
-        );
-        
-        // Actualizar en el estado local
+        const response = await api.put(`/notas/${selectedNota.id_nota}`, {
+          titulo: notaData.titulo,
+          contenido: notaData.contenido
+        });
+
         setNotas(notas.map((n) => 
           n.id_nota === selectedNota.id_nota 
             ? { ...n, ...notaData } 
             : n
         ));
-        
+
         console.log('Nota actualizada:', response.data);
       } else {
-        // Crear nueva nota
-        const response = await axios.post('http://localhost:5000/api/notas', {
+        const response = await api.post('/notas', {
           titulo: notaData.titulo,
           contenido: notaData.contenido,
           id_usuario: getUserId()
         });
-        
-        // Agregar al estado local
+
         setNotas([...notas, response.data]);
-        
+
         console.log('Nota creada:', response.data);
       }
-      
+
       setShowForm(false);
     } catch (error) {
       console.error('Error al guardar nota:', error);

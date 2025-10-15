@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import '../Styles/Home.css';
+import '../styles/Home.css';
 
 function Home() {
   return (
@@ -10,10 +10,10 @@ function Home() {
           Guarda tus notas y organiza tus ideas. Para empezar, inicia sesión o regístrate.
         </p>
         <div className="home-buttons">
-          <Link to="/login">
+          <Link to="/login" className="home-link">
             <button>Iniciar Sesión</button>
           </Link>
-          <Link to="/register">
+          <Link to="/register" className="home-link">
             <button>Registrarse</button>
           </Link>
         </div>

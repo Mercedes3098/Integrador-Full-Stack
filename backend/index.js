@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 
 import authRoutes from "./routes/auth.routes.js";
@@ -9,6 +10,13 @@ import etiquetasRoutes from "./routes/etiquetas.routes.js";
 dotenv.config();
 
 const app = express();
+
+// Configurar CORS ANTES de las rutas
+app.use(cors({
+  origin: 'http://localhost:3000', // URL del frontend
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
