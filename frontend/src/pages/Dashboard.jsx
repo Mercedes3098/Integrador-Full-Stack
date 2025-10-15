@@ -16,61 +16,73 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    const fetchNotas = async () => {
-      try {
-        setLoading(true);
-        const response = await api.get('/notas'); 
-        setNotas(response.data);
-      } catch (error) {
-        console.error('Error al cargar notas:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchNotas();
   }, []);
 
+  const fetchNotas = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/notas'); 
+      console.log('✅ Notas cargadas:', response.data);
+      setNotas(response.data);
+    } catch (error) {
+      console.error('❌ Error al cargar notas:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleCreate = () => {
+    console.log('➕ Creando nueva nota');
     setSelectedNota(null);
     setShowForm(true);
   };
 
   const handleEdit = (nota) => {
+    console.log('✏️ Editando nota:', nota);
     setSelectedNota(nota);
     setShowForm(true);
   };
 
   const handleDelete = async (id) => {
-    if (confirm("¿Eliminar esta nota?")) {
-      try {
-        await api.delete(`/notas/${id}`);
-
-        setNotas(notas.filter((n) => n.id_nota !== id));
-        console.log('Nota eliminada exitosamente');
-      } catch (error) {
-        console.error('Error al eliminar nota:', error);
-        alert('Error al eliminar la nota');
-      }
+    console.log('🗑️ Intentando eliminar nota ID:', id);
+    
+    if (!window.confirm("¿Estás seguro de que quieres eliminar esta nota?")) {
+      return;
+    }
+    
+    try {
+      await api.delete(`/notas/${id}`);
+      setNotas(notas.filter((n) => n.id_nota !== id));
+      console.log('✅ Nota eliminada');
+      alert('Nota eliminada correctamente');
+    } catch (error) {
+      console.error('❌ Error al eliminar:', error);
+      alert('Error al eliminar la nota');
     }
   };
 
   const handleSubmit = async (notaData) => {
+    console.log('💾 Guardando nota:', notaData);
+    
     try {
       if (selectedNota) {
-        const response = await api.put(`/notas/${selectedNota.id_nota}`, {
+        // ACTUALIZAR
+        await api.put(`/notas/${selectedNota.id_nota}`, {
           titulo: notaData.titulo,
           contenido: notaData.contenido
         });
 
         setNotas(notas.map((n) => 
           n.id_nota === selectedNota.id_nota 
-            ? { ...n, ...notaData } 
+            ? { ...n, titulo: notaData.titulo, contenido: notaData.contenido } 
             : n
         ));
 
-        console.log('Nota actualizada:', response.data);
+        console.log('✅ Nota actualizada');
+        alert('Nota actualizada');
       } else {
+        // CREAR
         const response = await api.post('/notas', {
           titulo: notaData.titulo,
           contenido: notaData.contenido,
@@ -78,18 +90,34 @@ function Dashboard() {
         });
 
         setNotas([...notas, response.data]);
-
-        console.log('Nota creada:', response.data);
+        console.log('✅ Nota creada:', response.data);
+        alert('Nota creada');
       }
 
       setShowForm(false);
+      setSelectedNota(null);
     } catch (error) {
-      console.error('Error al guardar nota:', error);
-      alert('Error al guardar la nota: ' + (error.response?.data?.message || error.message));
+      console.error('❌ Error al guardar:', error);
+      alert('Error: ' + (error.response?.data?.message || error.message));
     }
   };
 
-  if (loading) return <p className="dashboard-loading">Cargando notas...</p>;
+  const handleCancelForm = () => {
+    console.log('❌ Cancelando formulario');
+    setShowForm(false);
+    setSelectedNota(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="dashboard-container">
+        <Sidebar />
+        <div className="dashboard-content">
+          <p className="dashboard-loading">⏳ Cargando notas...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container">
@@ -97,22 +125,24 @@ function Dashboard() {
 
       <div className="dashboard-content">
         <div className="dashboard-header">
-          <h2>Mis Notas</h2>
+          <h2>📝 Mis Notas</h2>
           <button className="btn-add" onClick={handleCreate}>
             + Nueva Nota
           </button>
         </div>
 
         {notas.length === 0 ? (
-          <p className="no-notas">No tienes notas aún. ¡Crea una!</p>
+          <div className="no-notas">
+            <p>No tienes notas aún. ¡Crea tu primera nota!</p>
+          </div>
         ) : (
           <div className="notas-grid">
             {notas.map((nota) => (
               <NotaCard
                 key={nota.id_nota}
                 nota={nota}
-                onEdit={() => handleEdit(nota)}
-                onDelete={() => handleDelete(nota.id_nota)}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ))}
           </div>
@@ -120,11 +150,15 @@ function Dashboard() {
       </div>
 
       {showForm && (
-        <NotaForm
-          initialData={selectedNota}
-          onSubmit={handleSubmit}
-          onCancel={() => setShowForm(false)}
-        />
+        <div className="modal-overlay" onClick={handleCancelForm}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <NotaForm
+              initialData={selectedNota}
+              onSubmit={handleSubmit}
+              onCancel={handleCancelForm}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
