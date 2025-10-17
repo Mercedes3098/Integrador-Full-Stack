@@ -1,3 +1,4 @@
+// frontend/src/components/Navbar.jsx
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/Auth';
 import '../styles/Navbar.css';
@@ -7,10 +8,8 @@ function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    if (window.confirm('¿Seguro que quieres cerrar sesión?')) {
-      logout();
-      navigate('/');
-    }
+    logout();
+    navigate('/');
   };
 
   return (

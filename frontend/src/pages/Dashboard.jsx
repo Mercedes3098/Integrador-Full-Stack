@@ -1,7 +1,9 @@
+// frontend/src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import NotaCard from "../components/NotaCard";
 import NotaForm from "../components/NotaForm";
 import Sidebar from "../components/Sidebar";
+import Toast from "../components/Toast";
 import api from "../services/api";
 import "../styles/Dashboard.css";
 
@@ -10,6 +12,9 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedNota, setSelectedNota] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [etiquetaFiltro, setEtiquetaFiltro] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null); // ✅ Estado para confirmación
 
   useEffect(() => {
     fetchNotas();
@@ -47,19 +52,26 @@ function Dashboard() {
   const handleDelete = async (id) => {
     console.log('🗑️ Intentando eliminar nota ID:', id);
     
-    if (!window.confirm("¿Estás seguro de que quieres eliminar esta nota?")) {
-      return;
-    }
+    setConfirmDelete(id);
+  };
+
+  const confirmDeleteNota = async () => {
+    const id = confirmDelete;
+    setConfirmDelete(null); // Cerrar modal
     
     try {
       await api.delete(`/notas/${id}`);
       setNotas(notas.filter((n) => n.id_nota !== id));
       console.log('✅ Nota eliminada');
-      alert('Nota eliminada correctamente');
+      setToast({ message: 'Nota eliminada correctamente', type: 'success' });
     } catch (error) {
       console.error('❌ Error al eliminar:', error);
-      alert('Error al eliminar la nota');
+      setToast({ message: 'Error al eliminar la nota', type: 'error' });
     }
+  };
+
+  const cancelDelete = () => {
+    setConfirmDelete(null);
   };
 
   const handleSubmit = async (notaData) => {
@@ -73,13 +85,9 @@ function Dashboard() {
         });
 
         await actualizarEtiquetasNota(selectedNota.id_nota, notaData.etiquetas);
-
-        await fetchNotas();
         
         console.log('✅ Nota actualizada');
-        alert('Nota actualizada');
       } else {
-        // CREAR
         const response = await api.post('/notas', {
           titulo: notaData.titulo,
           contenido: notaData.contenido
@@ -88,18 +96,18 @@ function Dashboard() {
         if (notaData.etiquetas && notaData.etiquetas.length > 0) {
           await asignarEtiquetasNota(response.data.id_nota, notaData.etiquetas);
         }
-
-        await fetchNotas();
         
         console.log('✅ Nota creada:', response.data);
-        alert('Nota creada');
       }
 
       setShowForm(false);
       setSelectedNota(null);
+      
+      await fetchNotas();
+      
     } catch (error) {
       console.error('❌ Error al guardar:', error);
-      alert('Error: ' + (error.response?.data?.message || error.message));
+      setToast({ message: error.response?.data?.message || 'Error al guardar la nota', type: 'error' });
     }
   };
 
@@ -149,6 +157,17 @@ function Dashboard() {
     setSelectedNota(null);
   };
 
+  const handleFiltroEtiqueta = (etiqueta) => {
+    setEtiquetaFiltro(etiqueta);
+  };
+
+  // ✅ Filtrar notas según la etiqueta seleccionada
+  const notasFiltradas = etiquetaFiltro 
+    ? notas.filter(nota => 
+        nota.etiquetas?.some(e => e.id_etiqueta === etiquetaFiltro.id_etiqueta)
+      )
+    : notas;
+
   if (loading) {
     return (
       <div className="dashboard-container">
@@ -162,7 +181,12 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <Sidebar notas={notas} onRefresh={fetchNotas} />
+      <Sidebar 
+        notas={notas} 
+        onRefresh={fetchNotas}
+        onFiltroChange={handleFiltroEtiqueta}
+        etiquetaActiva={etiquetaFiltro}
+      />
 
       <div className="dashboard-content">
         <div className="dashboard-header">
@@ -172,13 +196,18 @@ function Dashboard() {
           </button>
         </div>
 
-        {notas.length === 0 ? (
+        {notasFiltradas.length === 0 ? (
           <div className="no-notas">
-            <p>No tienes notas aún. ¡Crea tu primera nota!</p>
+            <p>
+              {etiquetaFiltro 
+                ? `No hay notas con la etiqueta "${etiquetaFiltro.nombre}"`
+                : 'No tienes notas aún. ¡Crea tu primera nota!'
+              }
+            </p>
           </div>
         ) : (
           <div className="notas-grid">
-            {notas.map((nota) => (
+            {notasFiltradas.map((nota) => (
               <NotaCard
                 key={nota.id_nota}
                 nota={nota}
@@ -200,6 +229,23 @@ function Dashboard() {
             />
           </div>
         </div>
+      )}
+
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
+
+      {confirmDelete && (
+        <ConfirmModal
+          title="🗑️ Eliminar Nota"
+          message="¿Estás seguro de que quieres eliminar esta nota? Esta acción no se puede deshacer."
+          onConfirm={confirmDeleteNota}
+          onCancel={cancelDelete}
+        />
       )}
     </div>
   );

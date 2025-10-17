@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import '../styles/Sidebar.css';
 
-function Sidebar({ notas, onRefresh }) {
+function Sidebar({ notas, onRefresh, onFiltroChange, etiquetaActiva }) {
   const [etiquetas, setEtiquetas] = useState([]);
-  const [etiquetaSeleccionada, setEtiquetaSeleccionada] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -16,7 +15,6 @@ function Sidebar({ notas, onRefresh }) {
       setLoading(true);
       const response = await api.get('/etiquetas');
       
-      // Contar cuántas notas tiene cada etiqueta
       const etiquetasConConteo = response.data.map(etiqueta => {
         const count = notas.filter(nota => 
           nota.etiquetas?.some(e => e.id_etiqueta === etiqueta.id_etiqueta)
@@ -34,32 +32,40 @@ function Sidebar({ notas, onRefresh }) {
   };
 
   const handleEtiquetaClick = (etiqueta) => {
-    if (etiquetaSeleccionada?.id_etiqueta === etiqueta.id_etiqueta) {
-      setEtiquetaSeleccionada(null);
+    if (etiquetaActiva?.id_etiqueta === etiqueta.id_etiqueta) {
+
+      onFiltroChange(null);
     } else {
-      setEtiquetaSeleccionada(etiqueta);
+      onFiltroChange(etiqueta);
     }
   };
 
   const handleDeleteEtiqueta = async (e, id_etiqueta) => {
     e.stopPropagation();
     
-    if (!window.confirm('¿Eliminar esta etiqueta? Se quitará de todas las notas.')) {
-      return;
-    }
+    setConfirmDelete(id_etiqueta);
+  };
+
+  const confirmDeleteEtiqueta = async () => {
+    const id_etiqueta = confirmDelete;
+    setConfirmDelete(null); // Cerrar modal
 
     try {
       await api.delete(`/etiquetas/${id_etiqueta}`);
       setEtiquetas(etiquetas.filter(e => e.id_etiqueta !== id_etiqueta));
-      if (etiquetaSeleccionada?.id_etiqueta === id_etiqueta) {
-        setEtiquetaSeleccionada(null);
+      
+      if (etiquetaActiva?.id_etiqueta === id_etiqueta) {
+        onFiltroChange(null);
       }
+      
       if (onRefresh) onRefresh();
-      alert('Etiqueta eliminada');
     } catch (error) {
       console.error('Error al eliminar etiqueta:', error);
-      alert('Error al eliminar la etiqueta');
     }
+  };
+
+  const cancelDelete = () => {
+    setConfirmDelete(null);
   };
 
   return (
@@ -81,8 +87,8 @@ function Sidebar({ notas, onRefresh }) {
       ) : (
         <ul className="etiquetas-list">
           <li 
-            className={`etiqueta-item ${!etiquetaSeleccionada ? 'active' : ''}`}
-            onClick={() => setEtiquetaSeleccionada(null)}
+            className={`etiqueta-item ${!etiquetaActiva ? 'active' : ''}`}
+            onClick={() => onFiltroChange(null)}
           >
             <div className="etiqueta-content">
               <span className="etiqueta-icon">📝</span>
@@ -95,7 +101,7 @@ function Sidebar({ notas, onRefresh }) {
             <li
               key={etiqueta.id_etiqueta}
               className={`etiqueta-item ${
-                etiquetaSeleccionada?.id_etiqueta === etiqueta.id_etiqueta ? 'active' : ''
+                etiquetaActiva?.id_etiqueta === etiqueta.id_etiqueta ? 'active' : ''
               }`}
               onClick={() => handleEtiquetaClick(etiqueta)}
             >
@@ -117,14 +123,23 @@ function Sidebar({ notas, onRefresh }) {
         </ul>
       )}
 
-      {etiquetaSeleccionada && (
+      {etiquetaActiva && (
         <div className="filtro-activo">
           <small>Filtrando por:</small>
           <div className="filtro-tag">
-            {etiquetaSeleccionada.nombre}
-            <button onClick={() => setEtiquetaSeleccionada(null)}>✕</button>
+            {etiquetaActiva.nombre}
+            <button onClick={() => onFiltroChange(null)}>✕</button>
           </div>
         </div>
+      )}
+
+      {confirmDelete && (
+        <ConfirmModal
+          title="🗑️ Eliminar Etiqueta"
+          message="¿Estás seguro de que quieres eliminar esta etiqueta? Se quitará de todas las notas."
+          onConfirm={confirmDeleteEtiqueta}
+          onCancel={cancelDelete}
+        />
       )}
     </aside>
   );
