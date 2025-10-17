@@ -1,4 +1,3 @@
-// frontend/src/context/Auth.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -8,7 +7,6 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Verificar si hay un usuario guardado al cargar
   useEffect(() => {
     const token = localStorage.getItem('token');
     const usuario = localStorage.getItem('usuario');
@@ -43,10 +41,8 @@ export function AuthProvider({ children }) {
   const register = async (userData) => {
     setLoading(true);
     try {
-      // Primero registrar
       await axios.post('http://localhost:5000/api/auth/register', userData);
       
-      // Luego hacer login automático
       const loginResponse = await axios.post('http://localhost:5000/api/auth/login', {
         email: userData.email,
         password: userData.password

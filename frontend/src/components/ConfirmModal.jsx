@@ -1,6 +1,13 @@
 import '../styles/ConfirmModal.css';
 
-function ConfirmModal({ title, message, onConfirm, onCancel }) {
+function ConfirmModal({ 
+  title, 
+  message, 
+  confirmText = "Sí, eliminar",
+  cancelText = "Cancelar",
+  onConfirm, 
+  onCancel 
+}) {
   return (
     <div className="confirm-overlay" onClick={onCancel}>
       <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
@@ -8,10 +15,10 @@ function ConfirmModal({ title, message, onConfirm, onCancel }) {
         <p>{message}</p>
         <div className="confirm-buttons">
           <button className="btn-confirm-yes" onClick={onConfirm}>
-            Sí, eliminar
+            {confirmText}
           </button>
           <button className="btn-confirm-no" onClick={onCancel}>
-            Cancelar
+            {cancelText}
           </button>
         </div>
       </div>

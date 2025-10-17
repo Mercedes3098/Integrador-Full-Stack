@@ -70,8 +70,7 @@ function Register() {
       await register({ nombre, email, password });
       console.log('Registro exitoso, redirigiendo...');
       
-      // Redirigir al login
-      navigate('/login');
+      navigate('/dashboard');
     } catch (error) {
       setErrors({ submit: error.message || 'Error al crear la cuenta' });
       console.error('Error de registro:', error);
