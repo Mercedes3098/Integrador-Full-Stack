@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import ConfirmModal from './ConfirmModal';
 import '../styles/Sidebar.css';
 
 function Sidebar({ notas, onRefresh, onFiltroChange, etiquetaActiva }) {
   const [etiquetas, setEtiquetas] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   useEffect(() => {
     fetchEtiquetas();
@@ -33,7 +35,6 @@ function Sidebar({ notas, onRefresh, onFiltroChange, etiquetaActiva }) {
 
   const handleEtiquetaClick = (etiqueta) => {
     if (etiquetaActiva?.id_etiqueta === etiqueta.id_etiqueta) {
-
       onFiltroChange(null);
     } else {
       onFiltroChange(etiqueta);
@@ -42,13 +43,12 @@ function Sidebar({ notas, onRefresh, onFiltroChange, etiquetaActiva }) {
 
   const handleDeleteEtiqueta = async (e, id_etiqueta) => {
     e.stopPropagation();
-    
     setConfirmDelete(id_etiqueta);
   };
 
   const confirmDeleteEtiqueta = async () => {
     const id_etiqueta = confirmDelete;
-    setConfirmDelete(null); // Cerrar modal
+    setConfirmDelete(null);
 
     try {
       await api.delete(`/etiquetas/${id_etiqueta}`);

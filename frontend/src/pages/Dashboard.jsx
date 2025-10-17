@@ -1,9 +1,9 @@
-// frontend/src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import NotaCard from "../components/NotaCard";
 import NotaForm from "../components/NotaForm";
 import Sidebar from "../components/Sidebar";
 import Toast from "../components/Toast";
+import ConfirmModal from "../components/ConfirmModal";
 import api from "../services/api";
 import "../styles/Dashboard.css";
 
@@ -14,7 +14,7 @@ function Dashboard() {
   const [showForm, setShowForm] = useState(false);
   const [etiquetaFiltro, setEtiquetaFiltro] = useState(null);
   const [toast, setToast] = useState(null);
-  const [confirmDelete, setConfirmDelete] = useState(null); // ✅ Estado para confirmación
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   useEffect(() => {
     fetchNotas();
@@ -51,13 +51,12 @@ function Dashboard() {
 
   const handleDelete = async (id) => {
     console.log('🗑️ Intentando eliminar nota ID:', id);
-    
     setConfirmDelete(id);
   };
 
   const confirmDeleteNota = async () => {
     const id = confirmDelete;
-    setConfirmDelete(null); // Cerrar modal
+    setConfirmDelete(null);
     
     try {
       await api.delete(`/notas/${id}`);
@@ -87,6 +86,7 @@ function Dashboard() {
         await actualizarEtiquetasNota(selectedNota.id_nota, notaData.etiquetas);
         
         console.log('✅ Nota actualizada');
+        setToast({ message: 'Nota actualizada correctamente', type: 'success' });
       } else {
         const response = await api.post('/notas', {
           titulo: notaData.titulo,
@@ -98,11 +98,11 @@ function Dashboard() {
         }
         
         console.log('✅ Nota creada:', response.data);
+        setToast({ message: 'Nota creada correctamente', type: 'success' });
       }
 
       setShowForm(false);
       setSelectedNota(null);
-      
       await fetchNotas();
       
     } catch (error) {
@@ -161,7 +161,6 @@ function Dashboard() {
     setEtiquetaFiltro(etiqueta);
   };
 
-  // ✅ Filtrar notas según la etiqueta seleccionada
   const notasFiltradas = etiquetaFiltro 
     ? notas.filter(nota => 
         nota.etiquetas?.some(e => e.id_etiqueta === etiquetaFiltro.id_etiqueta)
@@ -171,7 +170,7 @@ function Dashboard() {
   if (loading) {
     return (
       <div className="dashboard-container">
-        <Sidebar />
+        <Sidebar notas={[]} onRefresh={fetchNotas} onFiltroChange={handleFiltroEtiqueta} />
         <div className="dashboard-content">
           <p className="dashboard-loading">⏳ Cargando notas...</p>
         </div>

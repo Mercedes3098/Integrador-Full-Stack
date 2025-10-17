@@ -1,0 +1,108 @@
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .confirm-modal {
+    background-color: white;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .confirm-modal h3 {
+    margin: 0 0 16px 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  .confirm-modal p {
+    margin: 0 0 24px 0;
+    color: #495057;
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: center;
+  }
+  
+  .confirm-buttons {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .confirm-buttons button {
+    flex: 1;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+  }
+  
+  .btn-confirm-yes {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .btn-confirm-yes:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  }
+  
+  .btn-confirm-no {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+  }
+  
+  .btn-confirm-no:hover {
+    background-color: #bdc3c7;
+  }
+  
+  @media (max-width: 640px) {
+    .confirm-modal {
+      padding: 24px;
+    }
+  
+    .confirm-modal h3 {
+      font-size: 1.3rem;
+    }
+  
+    .confirm-buttons {
+      flex-direction: column;
+    }
+  }
