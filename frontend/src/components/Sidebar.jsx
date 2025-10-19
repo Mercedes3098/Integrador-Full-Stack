@@ -123,16 +123,6 @@ function Sidebar({ notas, onRefresh, onFiltroChange, etiquetaActiva }) {
         </ul>
       )}
 
-      {etiquetaActiva && (
-        <div className="filtro-activo">
-          <small>Filtrando por:</small>
-          <div className="filtro-tag">
-            {etiquetaActiva.nombre}
-            <button onClick={() => onFiltroChange(null)}>✕</button>
-          </div>
-        </div>
-      )}
-
       {confirmDelete && (
         <ConfirmModal
           title="🗑️ Eliminar Etiqueta"

@@ -30,7 +30,7 @@ function NotaCard({ nota, onEdit, onDelete }) {
             className="btn-action btn-delete"
             title="Eliminar nota"
           >
-            🗑️
+            ✕
           </button>
         </div>
       </div>

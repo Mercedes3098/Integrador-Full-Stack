@@ -23,6 +23,10 @@ function Navbar() {
     setShowConfirm(false);
   };
 
+  const handleProfileClick = () => {
+    navigate('/perfil');
+  };
+
   return (
     <>
       <nav className="navbar">
@@ -34,8 +38,11 @@ function Navbar() {
           {user && (
             <div className="navbar-user">
               <span className="user-name">👤 {user.usuario}</span>
+              <button onClick={handleProfileClick} className="btn-profile">
+                Mi Perfil
+              </button>
               <button onClick={handleLogoutClick} className="btn-logout">
-                Cerrar sesión
+                Cerrar Sesión
               </button>
             </div>
           )}

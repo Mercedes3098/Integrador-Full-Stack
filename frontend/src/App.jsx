@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Perfil from './pages/Perfil';
 
 function AppWrapper() {
   const location = useLocation();
@@ -25,6 +26,15 @@ function AppWrapper() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/perfil" 
+            element={
+              <ProtectedRoute>
+                <Perfil />
               </ProtectedRoute>
             } 
           />
