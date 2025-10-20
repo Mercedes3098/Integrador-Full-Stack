@@ -1,4 +1,4 @@
-# 🦷App de notas
+# App de notas
 
 ## Descripción del Proyecto
 
